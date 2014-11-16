@@ -17,35 +17,6 @@ fullPlanData.2015$Year <- 2015
 fullPlanData <- rbind(fullPlanData.2014, fullPlanData.2015)
 fullPlanData <- subset(fullPlanData, !is.na(fullPlanData$Premium.Adult.Individual.Age.21))
 
-####################
-
-fullPlanData$Premium.Adult.Individual.Age.21 <- as.numeric(fullPlanData$Premium.Adult.Individual.Age.21)
-
-fullPlanData.21premium.byState.MetalLevel <- aggregate(fullPlanData$Premium.Adult.Individual.Age.21, list(State = fullPlanData$State, Metal.Level = as.factor(fullPlanData$Metal.Level), Year = as.factor(fullPlanData$Year)),  min)
-
-fullPlanData.count.byState.MetalLevel <- aggregate(fullPlanData$Issuer.Name, list(State = fullPlanData$State, Metal.Level = as.factor(fullPlanData$Metal.Level), Year = as.factor(fullPlanData$Year)), countFunction)
-
-fullPlanData.byState.MetalLevel <- merge(fullPlanData.21premium.byState.MetalLevel, fullPlanData.count.byState.MetalLevel, by = c("State", "Metal.Level", "Year"))
-colnames(fullPlanData.byState.MetalLevel)[4] <- "Premium21"
-colnames(fullPlanData.byState.MetalLevel)[5] <- "Competition"
-
-fullPlanData.byState.MetalLevel$Metal.Level <- factor(fullPlanData.byState.MetalLevel$Metal.Level, levels = c("Catastrophic", "Bronze", "Silver", "Gold", "Platinum"))
-
-
-price_competition <- ggplot(fullPlanData.byState.MetalLevel, aes (x = Competition, y = Premium21)) + geom_point(aes(group = Year, color=Metal.Level), position="Jitter") + scale_y_continuous(name = "Monthly Premium for 21yo", limit=c(0,600), breaks=seq(0,600, by=100), labels=dollar) + scale_x_continuous(limit=c(0,16.25))
-price_competition + stat_smooth(method = lm, aes(fill = factor(Metal.Level))) + facet_grid(Year ~Metal.Level) + guides(fill=guide_legend(title="Metal Level")) + labs(title="Minimum Monthly Premiums by Competition by State, 2014 vs. 2015", x = "Number of Unique Competitors in Market") + theme(legend.position="none", plot.title = element_text(vjust=1, face="bold"))
-
-
-summary(lm(Premium21~Competition, fullPlanData.byState.MetalLevel, subset = Metal.Level == "Bronze"))
-summary(lm(Premium21~Competition, fullPlanData.byState.MetalLevel, subset = Metal.Level == "Silver"))
-summary(lm(Premium21~Competition, fullPlanData.byState.MetalLevel, subset = Metal.Level == "Gold"))
-summary(lm(Premium21~Competition, fullPlanData.byState.MetalLevel, subset = Metal.Level == "Platinum"))
-summary(lm(Premium21~Competition, fullPlanData.byState.MetalLevel, subset = Metal.Level == "Catastrophic"))
-
-summary(lm(Premium21~Competition, fullPlanData.byState.MetalLevel, subset= Year == "2014"))
-summary(lm(Premium21~Competition, fullPlanData.byState.MetalLevel, subset= Year == "2015"))
-
-
 
 ####################
 ###Mean Analysis
@@ -92,8 +63,8 @@ colnames(fullPlanData.byState.MetalLevel)[5] <- "Competition"
 fullPlanData.byState.MetalLevel$Metal.Level <- factor(fullPlanData.byState.MetalLevel$Metal.Level, levels = c("Catastrophic", "Bronze", "Silver", "Gold", "Platinum"))
 
 
-price_competition <- ggplot(fullPlanData.byState.MetalLevel, aes (x = Competition, y = Premium21)) + geom_point(aes(group = Year, color=Metal.Level), position="Jitter") + scale_y_continuous(name = "Monthly Premium for 21yo", limit=c(0,600), breaks=seq(0,600, by=100), labels=dollar) + scale_x_continuous(limit=c(0,16.25))
-price_competition + stat_smooth(method = lm, aes(fill = factor(Metal.Level))) + facet_grid(Year ~Metal.Level) + guides(fill=guide_legend(title="Metal Level")) + labs(title="Minimum Monthly Premiums by Competition by State, 2014 vs. 2015", x = "Number of Unique Competitors in Market") + theme(legend.position="none", plot.title = element_text(vjust=1, face="bold"))
+price_competition.min <- ggplot(fullPlanData.byState.MetalLevel, aes (x = Competition, y = Premium21)) + geom_point(aes(group = Year, color=Metal.Level), position="Jitter") + scale_y_continuous(name = "Monthly Premium for 21yo", limit=c(0,600), breaks=seq(0,600, by=100), labels=dollar) + scale_x_continuous(limit=c(0,16.25))
+price_competition.min + stat_smooth(method = lm, aes(fill = factor(Metal.Level))) + facet_grid(Year ~Metal.Level) + guides(fill=guide_legend(title="Metal Level")) + labs(title="Minimum Monthly Premiums by Competition by State, 2014 vs. 2015", x = "Number of Unique Competitors in Market") + theme(legend.position="none", plot.title = element_text(vjust=1, face="bold"))
 
 
 summary(lm(Premium21~Competition, fullPlanData.byState.MetalLevel, subset = Metal.Level == "Bronze"))
