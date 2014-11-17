@@ -3,6 +3,8 @@
 #11/16/2014
 
 library(plyr)
+library(ggplot2)
+library(scales)
 
 ####################
 #Data source: https://www.healthcare.gov/health-plan-information-2015/
@@ -17,10 +19,14 @@ fullPlanData.2015$Year <- 2015
 fullPlanData <- rbind(fullPlanData.2014, fullPlanData.2015)
 fullPlanData <- subset(fullPlanData, !is.na(fullPlanData$Premium.Adult.Individual.Age.21))
 
+countFunction <- function(x)
+{
+  length(unique(na.omit(x)))
+}
 
 ####################
 ###Mean Analysis
-
+fullPlanData.mean <- fullPlanData
 fullPlanData.mean$Premium.Adult.Individual.Age.21 <- as.numeric(fullPlanData.mean$Premium.Adult.Individual.Age.21)
 
 fullPlanData.mean.21premium.byState.MetalLevel <- aggregate(fullPlanData.mean$Premium.Adult.Individual.Age.21, list(State = fullPlanData.mean$State, Metal.Level = as.factor(fullPlanData.mean$Metal.Level), Year = as.factor(fullPlanData.mean$Year)),  mean)
